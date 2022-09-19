@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8">
+    <title>Quizz en ligne par Clément !</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="pragma" content="no-cache" />
+    <!--import css -->
+    <link rel="stylesheet" href="/style.css"/>
+    
+    <!--import auto css -->
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet"/>
+    
+    <!--import socket -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.2/socket.io.js"></script>
+  </head>
+  <body class="bg-black">
+    
+      <!-- INTRO -->
+      <div class="container h-screen m-auto flex flex-col justify-center items-center" id="intro">
+        <h1 class="text-4xl text-yellow-400">
+          Quizz Spécial <span class="text-red-400" >Cinéma</span> !
+        </h1>
+        <form id="form_pseudo" class="bg-black w-1/2 rounded p-6 shadow-md mt-4 border-4 border-yellow-400">
+          <h2 class="text-xl text-white font-bold mb-4">
+            Entrez votre pseudo :
+          </h2>
+          <input id="name" class="d-block rounded w-full border-4 border-yellow-400 shadow p-4 text-black" type="text" placeholder="Mets ton pseudo..."/>
+        </form>
+      </div> 
+    
+    <!-- JEU -->
+    <div class="container h-screen m-auto flex flex-col justify-center items-center hidden" id="game">
+      
+       <!-- Classement -->
+    <div class="bg-black rounded fixed top-0 left-0 p-6 shadow-md mt-4 border-4 border-yellow-400 text-center text-white">
+      <h3 class="text-2xl font-bold border-b border-yellow-400 pb-4 mb-4">
+        <span class="text-red-400">CLASSEMENT</span>
+      </h3>
+      <ul id="leaderboard">
+      </ul>
+    </div>
+      <!-- Classement -->
+      
+      <form id="form_jeu" class="bg-black w-1/2 rounded p-6 shadow-md mt-4 border-4 border-yellow-400">
+        <img class="fit-picture" src="/media/grapefruit-slice-332-332.jpg">
+        <h1 class="text-xl text-white font-bold mb-4" id="question"></h1>
+          <input id="reponse" class="d-block rounded w-full border-4 border-yellow-400 shadow p-4 text-black" type="text" placeholder="Ecris ta réponse..."/>
+      </form>
+      
+      <input id="switch" class="d-block rounded w-1/2 border-4 border-yellow-400 shadow p-4 text-black mt-5" type="button" value="Changer de thème"/>
+    </div>
+  </body>
+  <!--import script -->
+  <script src="/script.js"></script>
+</html>
