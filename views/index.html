@@ -4,8 +4,10 @@
     <meta charset="utf-8">
     <title>Quizz en ligne par Clément !</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="pragma" content="no-cache" />
     <!--import css -->
+      <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
     <link rel="stylesheet" href="/style.css"/>
     
     <!--import auto css -->
@@ -19,7 +21,7 @@
       <!-- INTRO -->
       <div class="container h-screen m-auto flex flex-col justify-center items-center" id="intro">
         <h1 class="text-4xl text-yellow-400">
-          Quizz Spécial <span class="text-red-400" >Cinéma</span> !
+          Quizz par <span class="text-red-400" >Clément</span> !
         </h1>
         <form id="form_pseudo" class="bg-black w-1/2 rounded p-6 shadow-md mt-4 border-4 border-yellow-400">
           <h2 class="text-xl text-white font-bold mb-4">
@@ -40,15 +42,23 @@
       <ul id="leaderboard">
       </ul>
     </div>
+      <div class="fixed bottom-0 left-0">
+        <input id="themeRAP" class="bg-black d-block rounded w-auto border-4 border-yellow-400 shadow p-4 text-white mt-5" type="button" value="Thème RAP"/>
+      <input id="themeManga" class="bg-black d-block rounded w-auto border-4 border-yellow-400 shadow p-4 text-white mt-5" type="button" value="Thème Manga"/>
+        <input id="themeCinema" class="bg-black d-block rounded w-auto border-4 border-yellow-400 shadow p-4 text-white mt-5" type="button" value="Thème Cinema"/>
+        <input id="themeRandom" class="bg-black text-white d-block rounded w-auto border-4 border-yellow-400 shadow p-4 mt-5" type="button" value="Thème Random"/>
+      </div>
+      <input type="file" class="fixed bottom-0 right-0 d-block rounded w-auto border-4 border-yellow-400 shadow p-4 text-black mt-5" id="imageFile"/>
       <!-- Classement -->
       
+      <h1 id="titre_jeu" class="text-4xl text-yellow-400">
+          Quizz Spécial <span class="text-red-400" >Cinéma</span> !
+        </h1>
       <form id="form_jeu" class="bg-black w-1/2 rounded p-6 shadow-md mt-4 border-4 border-yellow-400">
-        <img class="fit-picture" src="/media/grapefruit-slice-332-332.jpg">
+        <div class="Image"></div>
         <h1 class="text-xl text-white font-bold mb-4" id="question"></h1>
           <input id="reponse" class="d-block rounded w-full border-4 border-yellow-400 shadow p-4 text-black" type="text" placeholder="Ecris ta réponse..."/>
-      </form>
-      
-      <input id="switch" class="d-block rounded w-1/2 border-4 border-yellow-400 shadow p-4 text-black mt-5" type="button" value="Changer de thème"/>
+      </form>      
     </div>
   </body>
   <!--import script -->
