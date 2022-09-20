@@ -13,7 +13,9 @@ const titre_jeu = document.getElementById("titre_jeu");
 const image_rap = document.getElementById("image_rap");
 const music_div = document.getElementById("music");
 let play = document.querySelector('#play');
+let recent_volume= document.querySelector('#volume');
 let slider = document.querySelector('#duration_slider');
+let mode_jeu = "quizz_cinema";
 
 let socket = undefined;
 
@@ -80,12 +82,17 @@ submission.addEventListener("submit", function (evt) {
   const reponse = evt.target["reponse"].value;
 
   if (reponse) {
+    if(mode_jeu == "quizz_cinema"){
     socket.emit("send_response_Cinema", reponse);
+      } else if(mode_jeu == "quizz_rap"){
     socket.emit("send_response_Rap", reponse);
+        } else if(mode_jeu == "quizz_random"){
     socket.emit("send_response_Random", reponse);
+          } else if(mode_jeu == "quizz_manga"){
     socket.emit("send_response_Manga", reponse);
+            } else if(mode_jeu == "quizz_musique"){
     socket.emit("send_response_Music", reponse);
-
+            }
     evt.target["reponse"].value = "";
   }
 });
@@ -98,6 +105,7 @@ function StartGame() {
   game.classList.remove("hidden");
 
   socket.on("send_question_Cinema", (questionnaire) => { 
+   mode_jeu = questionnaire.mode;
     //on supprime le champs de texte pseudo
   image_rap.classList.add("hidden");
                     //on affiche les musiques
@@ -107,15 +115,17 @@ function StartGame() {
   });
 
   socket.on("send_question_Rap",(questionnaire) => {
+    mode_jeu = questionnaire.mode;
     //on affiche les images
   image_rap.classList.remove("hidden");
                     //on affiche les musiques
       music_div.classList.add("hidden");
     titre_jeu.innerHTML = "Quizz Spécial <span class='text-red-400'>Rap</span>";
-    question.innerText = questionnaire;
+    question.innerText = questionnaire.question;
   });
   
     socket.on("send_question_Random", (questionnaire) => {
+      mode_jeu = questionnaire.mode;
      //on supprime le champs de texte pseudo
   image_rap.classList.add("hidden");
                       //on affiche les musiques
@@ -125,6 +135,7 @@ function StartGame() {
   });
   
   socket.on("send_question_Music", (questionnaire) => { 
+    mode_jeu = questionnaire.mode;
           //on affiche les musiques
       music_div.classList.remove("hidden");
     //on supprime le champs de texte pseudo
@@ -137,6 +148,7 @@ function StartGame() {
   });
   
     socket.on("send_question_Manga", (questionnaire) => {
+      mode_jeu = questionnaire.mode;
      //on supprime le champs de texte pseudo
   image_rap.classList.add("hidden");
                 //on affiche les musiques
@@ -155,6 +167,20 @@ function StartGame() {
       .join("")}
     `;
   });
+  
+    socket.on("send_question_Music_after", (questionnaire) => {
+	if(questionnaire.numero_musique < questionnaire.length - 1){
+		questionnaire.numero_musique += 1;
+		load_track(questionnaire.numero_musique, questionnaire.path);
+		playsong();
+	}else{
+		questionnaire.numero_musique = 0;
+		load_track(questionnaire.numero_musique, questionnaire.path);
+		playsong();
+
+	}
+ });
+  
 }
 
 let timer;
@@ -176,6 +202,7 @@ function load_track(index_no, pathing){
 
 	track.src = pathing;
     track.load();
+  track.volume = 4/100;
 
 	timer = setInterval(range_slider ,1000);
 }
@@ -211,12 +238,10 @@ function pausesong(){
 	Playing_song = false;
 }
 
-// change slider position 
-function change_duration(){
-	let slider_position = track.duration * (slider.value / 100);
-	track.currentTime = slider_position;
+// change volume
+function volume_change(){
+	track.volume = recent_volume.value / 100;
 }
-
 function range_slider(){
 	let position = 0;
         
