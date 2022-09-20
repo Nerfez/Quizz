@@ -16,6 +16,7 @@ let play = document.querySelector('#play');
 let recent_volume= document.querySelector('#volume');
 let slider = document.querySelector('#duration_slider');
 let mode_jeu = "quizz_cinema";
+let name = "Anonyme";
 
 let socket = undefined;
 
@@ -41,7 +42,7 @@ themeMusic.addEventListener("click", function () {
 
 pseudo.addEventListener("submit", function (evt) {
   evt.preventDefault();
-  const name = evt.target["name"].value;
+  name = evt.target["name"].value;
 
   //si le pseudo n'est pas vide
   if (name) {
@@ -80,8 +81,9 @@ submission.addEventListener("submit", function (evt) {
   evt.preventDefault();
 
   const reponse = evt.target["reponse"].value;
-
   if (reponse) {
+    socket.emit('user_message',name, reponse);
+    
     if(mode_jeu == "quizz_cinema"){
     socket.emit("send_response_Cinema", reponse);
       } else if(mode_jeu == "quizz_rap"){
@@ -113,6 +115,14 @@ function StartGame() {
     titre_jeu.innerHTML = "Quizz Spécial <span class='text-red-400'>Cinéma</span>";
     question.innerText = questionnaire.question;
   });
+  
+    socket.on("mute_song_all", (data) => { 
+	track.pause();
+  });
+  
+      socket.on("play_song_all", (data) => { 
+    playsong();
+  });
 
   socket.on("send_question_Rap",(questionnaire) => {
     mode_jeu = questionnaire.mode;
@@ -122,6 +132,7 @@ function StartGame() {
       music_div.classList.add("hidden");
     titre_jeu.innerHTML = "Quizz Spécial <span class='text-red-400'>Rap</span>";
     question.innerText = questionnaire.question;
+    image_rap.src=questionnaire.url+".png";
   });
   
     socket.on("send_question_Random", (questionnaire) => {
@@ -144,7 +155,7 @@ function StartGame() {
     question.innerText = questionnaire.question;
     console.log("numero musique : "+ questionnaire.numero_musique + "  /  url : " + questionnaire.path);
     load_track(questionnaire.numero_musique, questionnaire.path);
-    justplay();
+    playsong();
   });
   
     socket.on("send_question_Manga", (questionnaire) => {
@@ -155,6 +166,10 @@ function StartGame() {
       music_div.classList.add("hidden");
       titre_jeu.innerHTML = "Quizz Spécial <span class='text-red-400'>Manga</span>";
     question.innerText = questionnaire.question;
+  });
+
+  socket.on('delete_chat', function(data){
+	document.getElementById("mychat").innerHTML = "";
   });
 
   socket.on("leaderboard", (leaderboard) => {
@@ -172,14 +187,35 @@ function StartGame() {
 	if(questionnaire.numero_musique < questionnaire.length - 1){
 		questionnaire.numero_musique += 1;
 		load_track(questionnaire.numero_musique, questionnaire.path);
+    track.volume = 4/100;
 		playsong();
 	}else{
 		questionnaire.numero_musique = 0;
 		load_track(questionnaire.numero_musique, questionnaire.path);
+    track.volume = 4/100;
 		playsong();
 
 	}
  });
+ 
+ 	socket.on('updateNewMessage',function(NamePlayer, Message){
+		const d = new Date();
+		let h = addZero(d.getHours());
+		let m = addZero(d.getMinutes());
+		let s = addZero(d.getSeconds());
+		let time = h + ":" + m + ":" + s;
+    	// Create an "li" node:
+		const node = document.createElement("li");
+
+		// Create a text node:
+		const textnode = document.createTextNode(NamePlayer + " | " + Message + " | " + time);
+
+		// Append the text node to the "li" node:
+		node.appendChild(textnode);
+
+		// Append the "li" node to the list:
+		document.getElementById("mychat").appendChild(node);
+    });
   
 }
 
@@ -232,6 +268,16 @@ function playsong(){
   autoplay = 0;
 }
 
+//mute sound function
+function mute_sound(){
+	socket.emit('mute_song', "mute le son");
+}
+
+//play sound function
+function play_sound(){
+	socket.emit('play_sound', "play le son");
+}
+
 //pause song
 function pausesong(){
 	track.pause();
@@ -261,5 +307,14 @@ function range_slider(){
            }
 	    }
      }
+	 
+	 function ClearChat()
+  {
+	let text = "delete the chat pls";
+	socket.emit('delete_message', text);
+  }
 
-
+function addZero(i) {
+		if (i < 10) {i = "0" + i}
+		return i;
+		}
