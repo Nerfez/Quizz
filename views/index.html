@@ -47,6 +47,7 @@
       <input id="themeManga" class="bg-black d-block rounded w-auto border-4 border-yellow-400 shadow p-4 text-white mt-5" type="button" value="Thème Manga"/>
         <input id="themeCinema" class="bg-black d-block rounded w-auto border-4 border-yellow-400 shadow p-4 text-white mt-5" type="button" value="Thème Cinema"/>
         <input id="themeRandom" class="bg-black text-white d-block rounded w-auto border-4 border-yellow-400 shadow p-4 mt-5" type="button" value="Thème Random"/>
+        <input id="themeMusic" class="bg-black text-white d-block rounded w-auto border-4 border-yellow-400 shadow p-4 mt-5" type="button" value="Thème Musique"/>
       </div>
       <input type="file" class="fixed bottom-0 right-0 d-block rounded w-auto border-4 border-yellow-400 shadow p-4 text-black mt-5" id="imageFile"/>
       <!-- Classement -->
@@ -55,7 +56,11 @@
           Quizz Spécial <span class="text-red-400" >Cinéma</span> !
         </h1>
       <form id="form_jeu" class="bg-black w-1/2 rounded p-6 shadow-md mt-4 border-4 border-yellow-400">
-        <div class="Image"></div>
+        <div id="music" class="hidden flex justify-center justify-between">
+          <input onclick="justplay()" id="play" type="button" class="h-70 w-70 rounded-full flex items-center justify-center cursor-pointer bg-red-400" value="Play">
+          <input type="range" min="0" max="100" value="0" id="duration_slider" onchange="change_duration()">
+        </div>
+        <div id="image_rap" class="Image hidden"></div>
         <h1 class="text-xl text-white font-bold mb-4" id="question"></h1>
           <input id="reponse" class="d-block rounded w-full border-4 border-yellow-400 shadow p-4 text-black" type="text" placeholder="Ecris ta réponse..."/>
       </form>      
