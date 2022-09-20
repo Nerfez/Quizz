@@ -5,51 +5,62 @@ const io = require('socket.io')(http);
 
 let players = [];
 let compteur_question = 0;
-let mode_jeu = "Cinéma";
+let answer_chanteur = "";
+let answer_chanson = "";
 
 let Questionnaire_Random = [
 {
   question: "Le nom du dernier album de booba ?",
-  reponse: "Ultra"
+  reponse: "Ultra",
+  mode: "quizz_random"
    },
   {
   question: "Un jeu bac à sable composé de cubes par un studio suédois ?",
-  reponse: "Minecraft"
+  reponse: "Minecraft",
+  mode: "quizz_random"
    },
   {
   question: "Qui a écrit Germinal ?",
-  reponse: "Zola"
+  reponse: "Zola",
+  mode: "quizz_random"
    },
   {
   question: "Un youtubeur qui réalise des tests sur des jeux rétro ?",
-  reponse: "Joueur du Grenier"
+  reponse: "Joueur du Grenier",
+  mode: "quizz_random"
    },
   {
   question: "Complétez l'expression : Mettre du beurre dans les...",
-  reponse: "Epinards"
+  reponse: "Epinards",
+  mode: "quizz_random"
    }
 ];
 
 let Questionnaire_Manga = [
 {
   question: "Le manga ayant inspiré Hunter X Hunter ?",
-  reponse: "Yu Yu Hakusho"
+  reponse: "Yu Yu Hakusho",
+  mode: "quizz_manga"
    },
   {
   question: "Le Héro principal de Black Clover ?",
-  reponse: "Asta"
+  reponse: "Asta",
+  mode: "quizz_manga"
    },
   {
   question: "Un héro qui veut devenir le roi des pirates ?",
-  reponse: "Luffy"
+  reponse: "Luffy",
+  mode: "quizz_manga"
    },
   {
   question: "Un anime où tout le monde meurt à la fin ?",
-  reponse: "Akame Ga Kill"
+  reponse: "Akame Ga Kill",
+  mode: "quizz_manga"
    },
   {
   question: "La Deuxième transformation de sangoku ?",
-  reponse: "Kaioken"
+  reponse: "Kaioken",
+  mode: "quizz_manga"
    }
 ];
 
@@ -59,138 +70,179 @@ let Questionnaire_Music = [
     chanteur: "Booba",
     chanson: "PGP",
     numero_musique: "0",
-     path: "1.ogg"
+     path: "1.ogg",
+  mode: "quizz_musique"
+  },
+  {
+    question: "Trouve le nom de la chanson et du chanteur",
+    chanteur: "13 Block",
+    chanson: "Mood",
+    numero_musique: "1",
+     path: "2.ogg",
+  mode: "quizz_musique"
   }
 ];
   
 let Questionnaire_Cinema = [
 {
      question: "Quel est le réalisateur de Minority Report ?",
-     reponse: "Steven Spielberg"
+     reponse: "Steven Spielberg",
+  mode: "quizz_cinema"
    },
    {
      question: "Pour quel film de guerre Sam Mendes est-il connu ?",
-     reponse: "1917"
+     reponse: "1917",
+  mode: "quizz_cinema"
    },
    {
      question: "L'Héroine de mad max fury road ?",
-     reponse: "Furiosa"
+     reponse: "Furiosa",
+  mode: "quizz_cinema"
    },
    {
      question: "Question en cours ?",
-     reponse: "test"
+     reponse: "test",
+  mode: "quizz_cinema"
    }
 ];
 
 
 let Questionnaire_Rap = [
 {
+  question: "Trouve le nom de l'album et du rappeur :",
      album: "Temps Mort",
-     singer: "Booba"
+     singer: "Booba",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Land",
-     singer: "Kekra"
+     singer: "Kekra",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Kolaf",
-     singer: "La Fève"
+     singer: "La Fève",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Destin",
-     singer: "Ninho"
+     singer: "Ninho",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Que La Famille",
-     singer: "PNL"
+     singer: "PNL",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "LA VIE EST BELLE",
-     singer: "Gambi"
+     singer: "Gambi",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Pacifique",
-     singer: "Disiz"
+     singer: "Disiz",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "L'Amour",
-     singer: "Disiz"
+     singer: "Disiz",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Nuit",
-     singer: "Jazzy Bazz"
+     singer: "Jazzy Bazz",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "BLO",
-     singer: "13 Block"
+     singer: "13 Block",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Civilisation",
-     singer: "Orelsan"
+     singer: "Orelsan",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Adios Bahamas",
-     singer: "Népal"
+     singer: "Népal",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Dans la légende",
-     singer: "PNL"
+     singer: "PNL",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Thank You God",
-     singer: "F430"
+     singer: "F430",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "1994",
-     singer: "Hamza"
+     singer: "Hamza",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Spécial",
-     singer: "Siboy"
+     singer: "Siboy",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Projet Blue Beam",
-     singer: "Freeze Corleone"
+     singer: "Freeze Corleone",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Sans rêve",
-     singer: "DTF"
+     singer: "DTF",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Lithopédion",
-     singer: "Damso"
+     singer: "Damso",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Trinity",
-     singer: "Laylow"
+     singer: "Laylow",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Imany",
-     singer: "Dinos"
+     singer: "Dinos",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Jeannine",
-     singer: "Lomepal"
+     singer: "Lomepal",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "UMLA",
-     singer: "Alpha Wann"
+     singer: "Alpha Wann",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "A7",
-     singer: "SCH"
+     singer: "SCH",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Le Monde Chico",
-     singer: "PNL"
+     singer: "PNL",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Xeu",
-     singer: "Vald"
+     singer: "Vald",
+  mode: "quizz_rap"
    },
-   {
+   {question: "Trouve le nom de l'album et du rappeur :",
      album: "Ateyaba",
-     singer: "Ateyaba"
+     singer: "Ateyaba",
+  mode: "quizz_rap"
    }
 ];
 
@@ -231,18 +283,26 @@ io.on('connection', function(socket){
     }
   });
   
+  
     socket.on('send_response_Music', reponse =>{
-     if(reponse == Questionnaire_Music[compteur_question].chanteur){
+     if(reponse === Questionnaire_Music[compteur_question].chanteur){
       increasePoints(socket.id);
-       Questionnaire_Music[compteur_question].chanteur = "qmpfijdqz349824qZD3Q2";
-       updateGame_Music();
-    } else if(reponse == Questionnaire_Music[compteur_question].chanson){
-      increasePoints(socket.id);
-       Questionnaire_Music[compteur_question].chanson = "qmpfijdqz349824qZD3Q2"; 
-       updateGame_Music();
+       answer_chanteur = Questionnaire_Music[compteur_question].chanteur;
+       const leaderboard = players.sort((a,b) => b.points - a.points).slice(0,10);
+       console.log(" 1 chanson : " +  answer_chanson+" / chanteur : "+answer_chanteur);
+       io.emit('leaderboard', leaderboard);
     } 
-      if (Questionnaire_Music[compteur_question].chanson == "qmpfijdqz349824qZD3Q2" && Questionnaire_Music[compteur_question].chanteur == "qmpfijdqz349824qZD3Q2"){
+      if(reponse === Questionnaire_Music[compteur_question].chanson){
+      increasePoints(socket.id);
+       answer_chanson = Questionnaire_Music[compteur_question].chanson; 
+      const leaderboard = players.sort((a,b) => b.points - a.points).slice(0,10);
+      console.log("2 chanson : " +  answer_chanson+" / chanteur : "+answer_chanteur);
+      io.emit('leaderboard', leaderboard);
+    } 
+      if (Questionnaire_Music[compteur_question].chanson === answer_chanson && Questionnaire_Music[compteur_question].chanteur === answer_chanteur){
+        console.log("3 chanson : " +  answer_chanson+" / chanteur : "+answer_chanteur);
         compteur_question += 1;
+        updateGame_Music();
       }
     });
   
@@ -285,7 +345,7 @@ io.on('connection', function(socket){
   //Changement de theme
 	socket.on('themeChangeRAP',function(data){
     compteur_question = 0;
-    io.emit('send_question_Rap', "Trouve le nom de l'album et du rappeur");
+    io.emit('send_question_Rap', Questionnaire_Rap[compteur_question]);
 	});
   
     //Changement de theme
@@ -328,8 +388,8 @@ function updateGame_Cinema(){
 
 function updateGame_Music(){
   const leaderboard = players.sort((a,b) => b.points - a.points).slice(0,10);
-    io.emit('send_question_Music', Questionnaire_Music[compteur_question]);
-    io.emit('leaderboard', leaderboard);
+    io.emit('send_question_Music_after', Questionnaire_Music[compteur_question]);
+  io.emit('leaderboard', leaderboard);
 }
 
 function updateGame_Manga(){
@@ -348,6 +408,7 @@ function updateGame_Random(){
 
 function updateGame_Rap(){
   const leaderboard = players.sort((a,b) => b.points - a.points).slice(0,10);
+  io.emit('send_question_Rap', Questionnaire_Rap[compteur_question]);
     io.emit('leaderboard', leaderboard);
 }
 
