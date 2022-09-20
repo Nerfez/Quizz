@@ -6,7 +6,6 @@ const io = require('socket.io')(http);
 let players = [];
 let compteur_question = 0;
 let mode_jeu = "Cinéma";
-let number = 0;
 
 let Questionnaire_Random = [
 {
@@ -52,6 +51,16 @@ let Questionnaire_Manga = [
   question: "La Deuxième transformation de sangoku ?",
   reponse: "Kaioken"
    }
+];
+
+let Questionnaire_Music = [
+  {
+    question: "Trouve le nom de la chanson et du chanteur",
+    chanteur: "Booba",
+    chanson: "PGP",
+    numero_musique: "0",
+     path: "1.ogg"
+  }
 ];
   
 let Questionnaire_Cinema = [
@@ -222,6 +231,21 @@ io.on('connection', function(socket){
     }
   });
   
+    socket.on('send_response_Music', reponse =>{
+     if(reponse == Questionnaire_Music[compteur_question].chanteur){
+      increasePoints(socket.id);
+       Questionnaire_Music[compteur_question].chanteur = "qmpfijdqz349824qZD3Q2";
+       updateGame_Music();
+    } else if(reponse == Questionnaire_Music[compteur_question].chanson){
+      increasePoints(socket.id);
+       Questionnaire_Music[compteur_question].chanson = "qmpfijdqz349824qZD3Q2"; 
+       updateGame_Music();
+    } 
+      if (Questionnaire_Music[compteur_question].chanson == "qmpfijdqz349824qZD3Q2" && Questionnaire_Music[compteur_question].chanteur == "qmpfijdqz349824qZD3Q2"){
+        compteur_question += 1;
+      }
+    });
+  
     socket.on('send_response_Manga', reponse =>{
      if(reponse == Questionnaire_Manga[compteur_question].reponse){
       increasePoints(socket.id);
@@ -282,6 +306,12 @@ io.on('connection', function(socket){
     io.emit('send_question_Random', Questionnaire_Random[compteur_question]);
 	});
   
+      //Changement de theme
+	socket.on('themeChangeMusic',function(data){
+    compteur_question = 0;
+    io.emit('send_question_Music', Questionnaire_Music[compteur_question]);
+	});
+  
   socket.on('disconnect', function(){
     //on retire le joueur de la liste
     players = [...players.filter(player => player.id !== socket.id)];
@@ -293,6 +323,12 @@ function updateGame_Cinema(){
   const leaderboard = players.sort((a,b) => b.points - a.points).slice(0,10);
     io.emit('send_question_Cinema', Questionnaire_Cinema[compteur_question]);
     
+    io.emit('leaderboard', leaderboard);
+}
+
+function updateGame_Music(){
+  const leaderboard = players.sort((a,b) => b.points - a.points).slice(0,10);
+    io.emit('send_question_Music', Questionnaire_Music[compteur_question]);
     io.emit('leaderboard', leaderboard);
 }
 
