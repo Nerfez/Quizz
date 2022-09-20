@@ -8,7 +8,12 @@ const themeRAP = document.getElementById("themeRAP");
 const themeCinema = document.getElementById("themeCinema");
 const themeManga = document.getElementById("themeManga");
 const themeRandom = document.getElementById("themeRandom");
+const themeMusic = document.getElementById("themeMusic");
 const titre_jeu = document.getElementById("titre_jeu");
+const image_rap = document.getElementById("image_rap");
+const music_div = document.getElementById("music");
+let play = document.querySelector('#play');
+let slider = document.querySelector('#duration_slider');
 
 let socket = undefined;
 
@@ -26,6 +31,10 @@ themeRandom.addEventListener("click", function () {
 
 themeManga.addEventListener("click", function () {
   socket.emit("themeChangeManga");
+});
+
+themeMusic.addEventListener("click", function () {
+  socket.emit("themeChangeMusic");
 });
 
 pseudo.addEventListener("submit", function (evt) {
@@ -75,34 +84,64 @@ submission.addEventListener("submit", function (evt) {
     socket.emit("send_response_Rap", reponse);
     socket.emit("send_response_Random", reponse);
     socket.emit("send_response_Manga", reponse);
+    socket.emit("send_response_Music", reponse);
 
     evt.target["reponse"].value = "";
   }
 });
 
 function StartGame() {
-  //on supprime le champs de texte pseudo
+  
+    //on supprime le champs de texte pseudo
   intro.classList.add("hidden");
   //on affiche les questions
   game.classList.remove("hidden");
 
-  socket.on("send_question_Cinema", (questionnaire) => {
+  socket.on("send_question_Cinema", (questionnaire) => { 
+    //on supprime le champs de texte pseudo
+  image_rap.classList.add("hidden");
+                    //on affiche les musiques
+      music_div.classList.add("hidden");
     titre_jeu.innerHTML = "Quizz Spécial <span class='text-red-400'>Cinéma</span>";
     question.innerText = questionnaire.question;
   });
 
-  socket.on("send_question_Rap", (questionnaire) => {
+  socket.on("send_question_Rap",(questionnaire) => {
+    //on affiche les images
+  image_rap.classList.remove("hidden");
+                    //on affiche les musiques
+      music_div.classList.add("hidden");
     titre_jeu.innerHTML = "Quizz Spécial <span class='text-red-400'>Rap</span>";
     question.innerText = questionnaire;
   });
   
     socket.on("send_question_Random", (questionnaire) => {
-    titre_jeu.innerHTML = "Quizz Spécial <span class='text-red-400'>Random</span>";
+     //on supprime le champs de texte pseudo
+  image_rap.classList.add("hidden");
+                      //on affiche les musiques
+      music_div.classList.add("hidden");
+      titre_jeu.innerHTML = "Quizz Spécial <span class='text-red-400'>Random</span>";
     question.innerText = questionnaire.question;
   });
   
+  socket.on("send_question_Music", (questionnaire) => { 
+          //on affiche les musiques
+      music_div.classList.remove("hidden");
+    //on supprime le champs de texte pseudo
+  image_rap.classList.add("hidden");
+    titre_jeu.innerHTML = "Quizz Spécial <span class='text-red-400'>Musique</span>";
+    question.innerText = questionnaire.question;
+    console.log("numero musique : "+ questionnaire.numero_musique + "  /  url : " + questionnaire.path);
+    load_track(questionnaire.numero_musique, questionnaire.path);
+    justplay();
+  });
+  
     socket.on("send_question_Manga", (questionnaire) => {
-    titre_jeu.innerHTML = "Quizz Spécial <span class='text-red-400'>Manga</span>";
+     //on supprime le champs de texte pseudo
+  image_rap.classList.add("hidden");
+                //on affiche les musiques
+      music_div.classList.add("hidden");
+      titre_jeu.innerHTML = "Quizz Spécial <span class='text-red-400'>Manga</span>";
     question.innerText = questionnaire.question;
   });
 
@@ -117,4 +156,85 @@ function StartGame() {
     `;
   });
 }
+
+let timer;
+let autoplay = 0;
+
+let index_no = 0;
+let Playing_song = false;
+
+//create a audio Element
+let track = document.createElement('audio');
+
+
+// All functions
+
+// function load the track
+function load_track(index_no, pathing){
+	clearInterval(timer);
+	reset_slider();
+
+	track.src = pathing;
+    track.load();
+
+	timer = setInterval(range_slider ,1000);
+}
+
+load_track(index_no);
+
+// checking.. the song is playing or not
+ function justplay(){
+ 	if(Playing_song==false){
+ 		playsong();
+
+ 	}else{
+ 		pausesong();
+ 	}
+ }
+
+
+// reset song slider
+ function reset_slider(){
+ 	slider.value = 0;
+ }
+
+// play song
+function playsong(){
+  track.play();
+  Playing_song = true;
+  autoplay = 0;
+}
+
+//pause song
+function pausesong(){
+	track.pause();
+	Playing_song = false;
+}
+
+// change slider position 
+function change_duration(){
+	let slider_position = track.duration * (slider.value / 100);
+	track.currentTime = slider_position;
+}
+
+function range_slider(){
+	let position = 0;
+        
+        // update slider position
+		if(!isNaN(track.duration)){
+		   position = track.currentTime * (100 / track.duration);
+		   slider.value =  position;
+	      }
+
+       
+       // function will run when the song is over
+       if(track.ended){
+           if(autoplay==1){
+		       index_no += 1;
+		       load_track(index_no);
+		       playsong();
+           }
+	    }
+     }
+
 
