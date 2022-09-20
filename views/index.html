@@ -56,9 +56,12 @@
           Quizz Spécial <span class="text-red-400" >Cinéma</span> !
         </h1>
       <form id="form_jeu" class="bg-black w-1/2 rounded p-6 shadow-md mt-4 border-4 border-yellow-400">
-        <div id="music" class="hidden flex justify-center justify-between">
+        <div id="music" class="hidden flex justify-center justify-between text-white">
           <input onclick="justplay()" id="play" type="button" class="h-70 w-70 rounded-full flex items-center justify-center cursor-pointer bg-red-400" value="Play">
+          Durée :
           <input type="range" min="0" max="100" value="0" id="duration_slider" onchange="change_duration()">
+          Volume :
+          <input type="range" min="0" max="100" value="0" id="volume" onchange="volume_change()">
         </div>
         <div id="image_rap" class="Image hidden"></div>
         <h1 class="text-xl text-white font-bold mb-4" id="question"></h1>
